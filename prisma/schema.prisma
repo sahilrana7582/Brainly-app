@@ -1,0 +1,25 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+enum channelType {
+  Twitter
+  Youtube
+  Documents
+  Links
+}
+
+
+model Task {
+  id            String              @id   @default(uuid())
+  userId        String                    @unique
+  channel       channelType
+  link          String                     @db.Text
+}

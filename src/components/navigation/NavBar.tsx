@@ -5,7 +5,7 @@ import NavFooter from './NavFooter';
 const NavBar = () => {
   return (
     <div className="h-full w-full bg-white dark:bg-[#313338] flex flex-col justify-between py-2">
-      <div className="flex justify-center flex-col space-y-6">
+      <div className="flex justify-center flex-col space-y-4">
         <Logo />
         {['Twitter', 'Youtube', 'Documents', 'Links'].map((name) => (
           //@ts-ignore
