@@ -19,7 +19,7 @@ enum channelType {
 
 model Task {
   id            String              @id   @default(uuid())
-  userId        String                    @unique
+  userId        String                    
   channel       channelType
   link          String                     @db.Text
 }

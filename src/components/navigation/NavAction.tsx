@@ -33,8 +33,10 @@ const NavAction = ({ name }: NavActionProp) => {
         )}
         onClick={handleRouter}
       >
-        <div className={cn()}>{iconMap[name]}</div>
-        <div>{name}</div>
+        <>
+          <div className={cn()}>{iconMap[name]}</div>
+          <div>{name}</div>
+        </>
       </button>
     </ActionToolKit>
   );

@@ -15,7 +15,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem } from '../ui/form';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { Plus } from 'lucide-react';
+import { Loader, Plus } from 'lucide-react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface DialogContentProp {
   channelType: channelType;
@@ -25,16 +27,38 @@ const formSchema = z.object({
   link: z.string(),
 });
 
-const AddContent = ({ channelType = 'Link' }: DialogContentProp) => {
+const AddContent = ({ channelType }: DialogContentProp) => {
+  const [loading, setLoading] = useState<Boolean>(false);
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       link: '',
     },
   });
+
+  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    setLoading((pre) => !pre);
+    const resp = await fetch(`/api/addcontent`, {
+      method: 'POST',
+      body: JSON.stringify({ ...data, channelType: channelType }),
+    });
+
+    const respData = await resp.json();
+    setLoading(false);
+    handleClose();
+    router.refresh();
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    form.reset();
+  };
   return (
-    <Dialog>
-      <DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
         <Button size="lg">
           <Plus />
           Add Content
@@ -51,7 +75,10 @@ const AddContent = ({ channelType = 'Link' }: DialogContentProp) => {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form className="space-y-4">
+          <form
+            className="space-y-4"
+            onSubmit={form.handleSubmit(handleSubmit)}
+          >
             <FormField
               control={form.control}
               name="link"
@@ -67,6 +94,15 @@ const AddContent = ({ channelType = 'Link' }: DialogContentProp) => {
                 </FormItem>
               )}
             />
+
+            <div className="flex justify-between">
+              <Button variant="destructive" onClick={() => form.reset()}>
+                Reset
+              </Button>
+              <Button>
+                {loading ? <Loader className="w-4 h-4 animate-spin" /> : 'Add'}
+              </Button>
+            </div>
           </form>
         </Form>
       </DialogContent>
